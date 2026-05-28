@@ -5,40 +5,339 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Carteira de Investimentos - Login</title>
   <style>
-    body { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; background: #0f172a; color: #e2e8f0; margin: 0; }
-    main { max-width: 920px; margin: 48px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 24px; }
-    section { border: 1px solid #334155; border-radius: 16px; padding: 24px; background: #111827; }
-    input, button { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; box-sizing: border-box; margin: 8px 0 14px; }
-    button { background: #22c55e; color: #052e16; font-weight: 700; cursor: pointer; }
-    .message { color: #93c5fd; }
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --bg-strong: #e8eef8;
+      --card: #ffffff;
+      --card-soft: #f8fafc;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #dbe4f0;
+      --primary: #155eef;
+      --primary-dark: #0f43b8;
+      --primary-soft: #e8f0ff;
+      --success: #16a34a;
+      --shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+      --radius-lg: 28px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(21, 94, 239, 0.18), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(22, 163, 74, 0.12), transparent 30rem),
+        linear-gradient(135deg, #f8fbff 0%, var(--bg) 48%, var(--bg-strong) 100%);
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 28px;
+      align-items: center;
+      padding: 48px 0;
+    }
+
+    .hero,
+    .auth-card {
+      border: 1px solid rgba(219, 228, 240, 0.9);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero {
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 42px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -110px;
+      bottom: -120px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(21, 94, 239, 0.24), rgba(22, 163, 74, 0.18));
+      filter: blur(2px);
+      z-index: 0;
+    }
+
+    .hero > * { position: relative; z-index: 1; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, p { margin-top: 0; }
+
+    h1 {
+      max-width: 640px;
+      margin: 26px 0 18px;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+    }
+
+    .lead {
+      max-width: 560px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.7;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 38px;
+    }
+
+    .feature {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(248, 250, 252, 0.86);
+      padding: 16px;
+    }
+
+    .feature strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.92rem;
+    }
+
+    .feature span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .portfolio-preview {
+      margin-top: 34px;
+      border: 1px solid rgba(219, 228, 240, 0.9);
+      border-radius: 24px;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 18px;
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.24);
+    }
+
+    .preview-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      color: #94a3b8;
+      font-size: 0.86rem;
+    }
+
+    .preview-total {
+      font-size: 2rem;
+      font-weight: 850;
+      letter-spacing: -0.05em;
+      color: #f8fafc;
+    }
+
+    .preview-pill {
+      display: inline-flex;
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.12);
+      color: #86efac;
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+
+    .bar-chart {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 7px;
+      align-items: end;
+      min-height: 120px;
+      margin-top: 22px;
+    }
+
+    .bar {
+      border-radius: 999px 999px 4px 4px;
+      background: linear-gradient(180deg, #60a5fa, #155eef);
+      min-height: 28px;
+    }
+
+    .bar:nth-child(2n) { background: linear-gradient(180deg, #86efac, #16a34a); }
+
+    .auth-card {
+      padding: 18px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--card);
+      padding: 26px;
+    }
+
+    .panel + .panel { margin-top: 16px; }
+
+    .panel h2 {
+      margin-bottom: 8px;
+      font-size: 1.35rem;
+      letter-spacing: -0.03em;
+    }
+
+    .panel p {
+      margin-bottom: 22px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      color: #334155;
+      font-size: 0.88rem;
+      font-weight: 750;
+    }
+
+    input {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--card-soft);
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(21, 94, 239, 0.12);
+    }
+
+    button {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--primary), #3478ff);
+      color: white;
+      font: inherit;
+      font-weight: 850;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(21, 94, 239, 0.24);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 34px rgba(21, 94, 239, 0.3);
+    }
+
+    .message {
+      min-height: 24px;
+      margin: 0 0 14px;
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
+    .secondary button {
+      background: #0f172a;
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+    }
+
+    @media (max-width: 880px) {
+      main { grid-template-columns: 1fr; padding: 24px 0; }
+      .hero { min-height: auto; padding: 28px; }
+      .feature-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 <main>
-  <section>
-    <h1>Carteira digital</h1>
-    <p>Projeto final em Rust: Axum, Askama, JWT/cookies e API de ativos.</p>
-    <p class="message">{{ message }}</p>
-    <form method="post" action="/login">
-      <label>E-mail</label>
-      <input name="email" type="email" value="rafael@example.com" required>
-      <label>Senha</label>
-      <input name="password" type="password" value="123456" required>
-      <button type="submit">Entrar</button>
-    </form>
+  <section class="hero" aria-labelledby="page-title">
+    <div>
+      <span class="eyebrow">Projeto DIO em Rust</span>
+      <h1 id="page-title">Carteira digital para acompanhar seus ativos.</h1>
+      <p class="lead">Aplicação web com Axum, Askama, JWT em cookies e uma área autenticada para registrar compras, consultar posições e visualizar ativos disponíveis.</p>
+      <div class="feature-grid" aria-label="Recursos do projeto">
+        <div class="feature"><strong>Login seguro</strong><span>Fluxo de autenticação com sessão via cookie.</span></div>
+        <div class="feature"><strong>Compras</strong><span>Registro de quantidade e preço pago por ativo.</span></div>
+        <div class="feature"><strong>Dashboard</strong><span>Resumo visual das posições da carteira.</span></div>
+      </div>
+    </div>
+
+    <div class="portfolio-preview" aria-hidden="true">
+      <div class="preview-top"><span>Prévia da carteira</span><span>Atualizado agora</span></div>
+      <div class="preview-total">R$ 24.860,00</div>
+      <span class="preview-pill">+8,4% no mês</span>
+      <div class="bar-chart">
+        <span class="bar" style="height: 44px"></span><span class="bar" style="height: 68px"></span><span class="bar" style="height: 52px"></span><span class="bar" style="height: 86px"></span><span class="bar" style="height: 64px"></span><span class="bar" style="height: 98px"></span><span class="bar" style="height: 72px"></span><span class="bar" style="height: 112px"></span><span class="bar" style="height: 82px"></span><span class="bar" style="height: 104px"></span><span class="bar" style="height: 92px"></span><span class="bar" style="height: 118px"></span>
+      </div>
+    </div>
   </section>
-  <section>
-    <h2>Cadastrar usuário</h2>
-    <form method="post" action="/register">
-      <label>Nome</label>
-      <input name="name" required>
-      <label>E-mail</label>
-      <input name="email" type="email" required>
-      <label>Senha</label>
-      <input name="password" type="password" required>
-      <button type="submit">Cadastrar</button>
-    </form>
-  </section>
+
+  <aside class="auth-card" aria-label="Acesso à carteira">
+    <section class="panel">
+      <h2>Entrar</h2>
+      <p>Acesse a carteira com o usuário de demonstração ou com uma conta cadastrada.</p>
+      <p class="message">{{ message }}</p>
+      <form method="post" action="/login">
+        <label for="login-email">E-mail</label>
+        <input id="login-email" name="email" type="email" value="rafael@example.com" autocomplete="email" required>
+        <label for="login-password">Senha</label>
+        <input id="login-password" name="password" type="password" value="123456" autocomplete="current-password" required>
+        <button type="submit">Entrar na carteira</button>
+      </form>
+    </section>
+
+    <section class="panel secondary">
+      <h2>Cadastrar usuário</h2>
+      <p>Crie uma nova conta para testar o fluxo completo de autenticação.</p>
+      <form method="post" action="/register">
+        <label for="register-name">Nome</label>
+        <input id="register-name" name="name" autocomplete="name" required>
+        <label for="register-email">E-mail</label>
+        <input id="register-email" name="email" type="email" autocomplete="email" required>
+        <label for="register-password">Senha</label>
+        <input id="register-password" name="password" type="password" autocomplete="new-password" required>
+        <button type="submit">Criar conta</button>
+      </form>
+    </section>
+  </aside>
 </main>
 </body>
 </html>

@@ -8,7 +8,9 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
-use dio_rust_carteira_investimentos::{build_positions, format_money, Asset, Position, Purchase, User};
+use dio_rust_carteira_investimentos::{
+    build_positions, format_money, Asset, Position, Purchase, User,
+};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
@@ -48,7 +50,7 @@ struct LoginForm {
 struct PurchaseForm {
     symbol: String,
     quantity: f64,
-    paid_price_cents: i64,
+    paid_price_reais: f64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -153,7 +155,10 @@ fn seed_state() -> AppState {
 
     AppState {
         users: Arc::new(RwLock::new(HashMap::from([(user.email.clone(), user)]))),
-        assets: Arc::new(RwLock::new(HashMap::from([(btc.symbol.clone(), btc), (usd.symbol.clone(), usd)]))),
+        assets: Arc::new(RwLock::new(HashMap::from([
+            (btc.symbol.clone(), btc),
+            (usd.symbol.clone(), usd),
+        ]))),
         purchases: Arc::new(RwLock::new(purchases)),
         jwt_secret: std::env::var("JWT_SECRET").unwrap_or_else(|_| "dio-rust-secret".to_string()),
         admin_secret: std::env::var("ADMIN_SECRET").unwrap_or_else(|_| "admin".to_string()),
@@ -161,10 +166,15 @@ fn seed_state() -> AppState {
 }
 
 async fn login_page() -> impl IntoResponse {
-    render(LoginTemplate { message: "Use rafael@example.com / 123456 ou cadastre um novo usuário." })
+    render(LoginTemplate {
+        message: "Use rafael@example.com / 123456 ou cadastre um novo usuário.",
+    })
 }
 
-async fn register(State(state): State<AppState>, Form(form): Form<RegisterForm>) -> impl IntoResponse {
+async fn register(
+    State(state): State<AppState>,
+    Form(form): Form<RegisterForm>,
+) -> impl IntoResponse {
     let user = User::new(form.name, form.email, form.password);
     state.users.write().await.insert(user.email.clone(), user);
     Redirect::to("/")
@@ -173,17 +183,25 @@ async fn register(State(state): State<AppState>, Form(form): Form<RegisterForm>)
 async fn login(State(state): State<AppState>, Form(form): Form<LoginForm>) -> Response {
     let users = state.users.read().await;
     let Some(user) = users.get(&form.email.to_lowercase()) else {
-        return render(LoginTemplate { message: "Usuário não encontrado." }).into_response();
+        return render(LoginTemplate {
+            message: "Usuário não encontrado.",
+        })
+        .into_response();
     };
 
     if user.password != form.password {
-        return render(LoginTemplate { message: "Senha inválida." }).into_response();
+        return render(LoginTemplate {
+            message: "Senha inválida.",
+        })
+        .into_response();
     }
 
     let token = issue_token(&state.jwt_secret, user);
     let cookie = format!("session={token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=86400");
     let mut response = Redirect::to("/dashboard").into_response();
-    response.headers_mut().insert(header::SET_COOKIE, HeaderValue::from_str(&cookie).unwrap());
+    response
+        .headers_mut()
+        .insert(header::SET_COOKIE, HeaderValue::from_str(&cookie).unwrap());
     response
 }
 
@@ -231,7 +249,8 @@ async fn record_purchase(
         return Redirect::to("/");
     };
 
-    let purchase = Purchase::new(user_id, form.symbol, form.quantity, form.paid_price_cents);
+    let paid_price_cents = (form.paid_price_reais * 100.0).round() as i64;
+    let purchase = Purchase::new(user_id, form.symbol, form.quantity, paid_price_cents);
     state.purchases.write().await.push(purchase);
     Redirect::to("/dashboard")
 }
@@ -252,16 +271,27 @@ async fn upsert_asset(
         .unwrap_or(false);
 
     if !is_admin {
-        return (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "admin secret inválida" })));
+        return (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({ "error": "admin secret inválida" })),
+        );
     }
 
     let asset = Asset::new(payload.symbol, payload.name, payload.current_price_cents);
-    state.assets.write().await.insert(asset.symbol.clone(), asset.clone());
+    state
+        .assets
+        .write()
+        .await
+        .insert(asset.symbol.clone(), asset.clone());
     (StatusCode::OK, Json(serde_json::json!(asset)))
 }
 
 fn render<T: Template>(template: T) -> Html<String> {
-    Html(template.render().unwrap_or_else(|error| format!("Erro ao renderizar template: {error}")))
+    Html(
+        template
+            .render()
+            .unwrap_or_else(|error| format!("Erro ao renderizar template: {error}")),
+    )
 }
 
 fn issue_token(secret: &str, user: &User) -> String {
@@ -271,7 +301,12 @@ fn issue_token(secret: &str, user: &User) -> String {
         exp: 4_102_444_800,
     };
 
-    encode(&Header::default(), &claims, &EncodingKey::from_secret(secret.as_bytes())).unwrap()
+    encode(
+        &Header::default(),
+        &claims,
+        &EncodingKey::from_secret(secret.as_bytes()),
+    )
+    .unwrap()
 }
 
 fn authenticated_user_id(state: &AppState, headers: &HeaderMap) -> Option<Uuid> {
@@ -284,6 +319,7 @@ fn authenticated_user_id(state: &AppState, headers: &HeaderMap) -> Option<Uuid> 
         token,
         &DecodingKey::from_secret(state.jwt_secret.as_bytes()),
         &Validation::default(),
-    ).ok()?;
+    )
+    .ok()?;
     Uuid::parse_str(&decoded.claims.sub).ok()
 }

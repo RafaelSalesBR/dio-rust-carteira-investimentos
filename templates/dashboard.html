@@ -5,60 +5,457 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Minha carteira</title>
   <style>
-    body { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; background: #020617; color: #e2e8f0; margin: 0; }
-    main { max-width: 1120px; margin: 32px auto; padding: 24px; }
-    table { width: 100%; border-collapse: collapse; margin: 16px 0 32px; }
-    th, td { border-bottom: 1px solid #334155; padding: 12px; text-align: left; }
-    form, .card { border: 1px solid #334155; border-radius: 16px; padding: 18px; background: #111827; margin-bottom: 24px; }
-    input, select, button { padding: 10px; border-radius: 8px; border: 1px solid #475569; margin: 6px; }
-    button { background: #38bdf8; color: #082f49; font-weight: 700; cursor: pointer; }
-    .logout { background: #f87171; color: #450a0a; }
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #dbe4f0;
+      --primary: #155eef;
+      --primary-soft: #e8f0ff;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --danger-soft: #fee2e2;
+      --shadow: 0 22px 64px rgba(15, 23, 42, 0.09);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 0 0, rgba(21, 94, 239, 0.14), transparent 28rem),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 54px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 750;
+    }
+
+    .logo {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #37a4ff);
+      color: white;
+      font-weight: 900;
+      box-shadow: 0 14px 28px rgba(21, 94, 239, 0.26);
+    }
+
+    .logout-form {
+      margin: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--primary), #3478ff);
+      color: white;
+      font-weight: 850;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(21, 94, 239, 0.22);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(21, 94, 239, 0.28);
+    }
+
+    .logout {
+      background: var(--danger-soft);
+      color: var(--danger);
+      box-shadow: none;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 24px;
+      border: 1px solid rgba(219, 228, 240, 0.9);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(255,255,255,0.94), rgba(232,240,255,0.78));
+      box-shadow: var(--shadow);
+      padding: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      right: -110px;
+      top: -130px;
+      border-radius: 999px;
+      background: rgba(21, 94, 239, 0.14);
+    }
+
+    .hero > * { position: relative; z-index: 1; }
+
+    .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: #0f43b8;
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, p { margin-top: 0; }
+
+    h1 {
+      margin: 16px 0 10px;
+      font-size: clamp(2.2rem, 5vw, 4.1rem);
+      line-height: 0.98;
+      letter-spacing: -0.065em;
+    }
+
+    .hero p {
+      max-width: 660px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.65;
+    }
+
+    .summary-card {
+      width: min(330px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--surface);
+      padding: 18px;
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
+    }
+
+    .summary-card span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 750;
+    }
+
+    .summary-card strong {
+      display: block;
+      margin: 8px 0 6px;
+      font-size: 2rem;
+      letter-spacing: -0.055em;
+    }
+
+    .trend {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.1);
+      color: var(--success);
+      font-size: 0.82rem;
+      font-weight: 850;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid rgba(219, 228, 240, 0.95);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.92);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .card h2 {
+      margin-bottom: 6px;
+      font-size: 1.22rem;
+      letter-spacing: -0.035em;
+    }
+
+    .card-subtitle {
+      margin-bottom: 20px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .purchase-form {
+      display: grid;
+      gap: 13px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #334155;
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(21, 94, 239, 0.12);
+    }
+
+    .assets-stack {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .asset-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface-soft);
+      padding: 14px;
+    }
+
+    .symbol {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: #0f172a;
+      color: white;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .asset-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .asset-name {
+      display: block;
+      font-weight: 850;
+    }
+
+    .asset-label {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .price {
+      color: var(--ink);
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+    }
+
+    th, td {
+      padding: 15px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      background: var(--surface-soft);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    tbody tr:last-child td { border-bottom: 0; }
+
+    tbody tr:hover { background: #fbfdff; }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.10);
+      color: var(--success);
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .positions-card { margin-bottom: 24px; }
+
+    @media (max-width: 940px) {
+      .hero, .grid { grid-template-columns: 1fr; }
+      .summary-card { width: 100%; }
+    }
+
+    @media (max-width: 620px) {
+      main { width: min(100% - 20px, 1180px); padding-top: 18px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .hero, .card { padding: 18px; border-radius: 22px; }
+      h1 { font-size: 2.2rem; }
+    }
   </style>
 </head>
 <body>
 <main>
-  <h1>Olá, {{ user_name }}</h1>
-  <form method="post" action="/logout"><button class="logout" type="submit">Sair</button></form>
+  <header class="topbar">
+    <div class="brand"><span class="logo">CI</span><span>Carteira de Investimentos</span></div>
+    <form class="logout-form" method="post" action="/logout"><button class="logout" type="submit">Sair</button></form>
+  </header>
 
-  <section class="card">
-    <h2>Registrar nova compra</h2>
-    <form method="post" action="/purchases">
-      <select name="symbol">
-        {% for asset in assets %}<option value="{{ asset.symbol }}">{{ asset.symbol }} - {{ asset.name }}</option>{% endfor %}
-      </select>
-      <input name="quantity" type="number" step="0.0001" placeholder="Quantidade" required>
-      <input name="paid_price_cents" type="number" placeholder="Preço pago em centavos" required>
-      <button type="submit">Registrar compra</button>
-    </form>
+  <section class="hero" aria-labelledby="dashboard-title">
+    <div>
+      <span class="eyebrow">Dashboard autenticado</span>
+      <h1 id="dashboard-title">Olá, {{ user_name }}</h1>
+      <p>Registre compras, acompanhe suas posições e consulte os ativos disponíveis em uma interface simples, responsiva e construída com Rust.</p>
+    </div>
+    <aside class="summary-card" aria-label="Resumo visual da carteira">
+      <span>Status da carteira</span>
+      <strong>Ativa</strong>
+      <div class="trend">Pronta para novos aportes</div>
+    </aside>
   </section>
 
-  <section class="card">
-    <h2>Posições</h2>
-    <table>
-      <thead><tr><th>Ativo</th><th>Quantidade</th><th>Investido</th><th>Valor atual</th><th>Resultado</th></tr></thead>
-      <tbody>
-      {% for position in positions %}
-        <tr>
-          <td>{{ position.symbol }}</td>
-          <td>{{ position.quantity }}</td>
-          <td>{{ position.invested }}</td>
-          <td>{{ position.current_value }}</td>
-          <td>{{ position.profit }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </section>
+  <div class="grid">
+    <aside>
+      <section class="card">
+        <h2>Registrar nova compra</h2>
+        <p class="card-subtitle">Selecione um ativo, informe a quantidade e o preço pago por unidade em reais.</p>
+        <form class="purchase-form" method="post" action="/purchases">
+          <div>
+            <label for="symbol">Ativo</label>
+            <select id="symbol" name="symbol">
+              {% for asset in assets %}<option value="{{ asset.symbol }}">{{ asset.symbol }} - {{ asset.name }}</option>{% endfor %}
+            </select>
+          </div>
+          <div>
+            <label for="quantity">Quantidade</label>
+            <input id="quantity" name="quantity" type="number" step="0.0001" placeholder="Ex.: 10.5" required>
+          </div>
+          <div>
+            <label for="paid_price_reais">Preço pago por unidade (R$)</label>
+            <input id="paid_price_reais" name="paid_price_reais" type="number" step="0.01" min="0" placeholder="Ex.: 5.20" required>
+          </div>
+          <button type="submit">Registrar compra</button>
+        </form>
+      </section>
 
-  <section class="card">
-    <h2>Ativos disponíveis</h2>
-    <table>
-      <thead><tr><th>Símbolo</th><th>Nome</th><th>Preço atual</th></tr></thead>
-      <tbody>
-      {% for asset in assets %}<tr><td>{{ asset.symbol }}</td><td>{{ asset.name }}</td><td>{{ asset.current_price }}</td></tr>{% endfor %}
-      </tbody>
-    </table>
-  </section>
+      <section class="card" style="margin-top: 24px;">
+        <h2>Ativos disponíveis</h2>
+        <p class="card-subtitle">Lista dos ativos cadastrados para simular compras na carteira.</p>
+        <div class="assets-stack">
+          {% for asset in assets %}
+          <div class="asset-row">
+            <div class="asset-meta">
+              <span class="symbol">{{ asset.symbol }}</span>
+              <span><span class="asset-name">{{ asset.name }}</span><span class="asset-label">{{ asset.symbol }}</span></span>
+            </div>
+            <span class="price">{{ asset.current_price }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+    </aside>
+
+    <section class="card positions-card">
+      <h2>Posições</h2>
+      <p class="card-subtitle">Acompanhe quantidade, valor investido, valor atual e resultado de cada posição.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Ativo</th><th>Quantidade</th><th>Investido</th><th>Valor atual</th><th>Resultado</th></tr></thead>
+          <tbody>
+          {% for position in positions %}
+            <tr>
+              <td><span class="symbol">{{ position.symbol }}</span></td>
+              <td class="mono">{{ position.quantity }}</td>
+              <td>{{ position.invested }}</td>
+              <td>{{ position.current_value }}</td>
+              <td><span class="pill">{{ position.profit }}</span></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
 </main>
 </body>
 </html>

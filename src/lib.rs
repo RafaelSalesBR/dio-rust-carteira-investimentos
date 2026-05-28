@@ -10,7 +10,11 @@ pub struct Asset {
 }
 
 impl Asset {
-    pub fn new(symbol: impl Into<String>, name: impl Into<String>, current_price_cents: i64) -> Self {
+    pub fn new(
+        symbol: impl Into<String>,
+        name: impl Into<String>,
+        current_price_cents: i64,
+    ) -> Self {
         Self {
             symbol: symbol.into().to_uppercase(),
             name: name.into(),
@@ -30,7 +34,12 @@ pub struct Purchase {
 }
 
 impl Purchase {
-    pub fn new(user_id: Uuid, symbol: impl Into<String>, quantity: f64, paid_price_cents: i64) -> Self {
+    pub fn new(
+        user_id: Uuid,
+        symbol: impl Into<String>,
+        quantity: f64,
+        paid_price_cents: i64,
+    ) -> Self {
         Self {
             id: Uuid::new_v4(),
             user_id,
@@ -55,7 +64,11 @@ pub struct User {
 }
 
 impl User {
-    pub fn new(name: impl Into<String>, email: impl Into<String>, password: impl Into<String>) -> Self {
+    pub fn new(
+        name: impl Into<String>,
+        email: impl Into<String>,
+        password: impl Into<String>,
+    ) -> Self {
         Self {
             id: Uuid::new_v4(),
             name: name.into(),
@@ -88,14 +101,20 @@ pub fn format_money(cents: i64) -> String {
 pub fn build_positions(assets: &[Asset], purchases: &[Purchase], user_id: Uuid) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
 
-    for purchase in purchases.iter().filter(|purchase| purchase.user_id == user_id) {
+    for purchase in purchases
+        .iter()
+        .filter(|purchase| purchase.user_id == user_id)
+    {
         let current_price = assets
             .iter()
             .find(|asset| asset.symbol == purchase.symbol)
             .map(|asset| asset.current_price_cents)
             .unwrap_or(purchase.paid_price_cents);
 
-        if let Some(position) = positions.iter_mut().find(|position| position.symbol == purchase.symbol) {
+        if let Some(position) = positions
+            .iter_mut()
+            .find(|position| position.symbol == purchase.symbol)
+        {
             position.quantity += purchase.quantity;
             position.invested_cents += purchase.invested_cents();
             position.current_value_cents += money_times_quantity(current_price, purchase.quantity);
@@ -132,7 +151,10 @@ mod tests {
     #[test]
     fn calculates_positions_grouping_purchases_by_asset() {
         let user = User::new("Rafael", "rafael@example.com", "123456");
-        let assets = vec![Asset::new("btc", "Bitcoin", 1000), Asset::new("usd", "Dólar", 520)];
+        let assets = vec![
+            Asset::new("btc", "Bitcoin", 1000),
+            Asset::new("usd", "Dólar", 520),
+        ];
         let purchases = vec![
             Purchase::new(user.id, "btc", 2.0, 700),
             Purchase::new(user.id, "btc", 1.0, 1200),
