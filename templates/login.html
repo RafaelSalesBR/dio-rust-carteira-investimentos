@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carteira de Investimentos - Login</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; background: #0f172a; color: #e2e8f0; margin: 0; }
+    main { max-width: 920px; margin: 48px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 24px; }
+    section { border: 1px solid #334155; border-radius: 16px; padding: 24px; background: #111827; }
+    input, button { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; box-sizing: border-box; margin: 8px 0 14px; }
+    button { background: #22c55e; color: #052e16; font-weight: 700; cursor: pointer; }
+    .message { color: #93c5fd; }
+  </style>
+</head>
+<body>
+<main>
+  <section>
+    <h1>Carteira digital</h1>
+    <p>Projeto final em Rust: Axum, Askama, JWT/cookies e API de ativos.</p>
+    <p class="message">{{ message }}</p>
+    <form method="post" action="/login">
+      <label>E-mail</label>
+      <input name="email" type="email" value="rafael@example.com" required>
+      <label>Senha</label>
+      <input name="password" type="password" value="123456" required>
+      <button type="submit">Entrar</button>
+    </form>
+  </section>
+  <section>
+    <h2>Cadastrar usuário</h2>
+    <form method="post" action="/register">
+      <label>Nome</label>
+      <input name="name" required>
+      <label>E-mail</label>
+      <input name="email" type="email" required>
+      <label>Senha</label>
+      <input name="password" type="password" required>
+      <button type="submit">Cadastrar</button>
+    </form>
+  </section>
+</main>
+</body>
+</html>

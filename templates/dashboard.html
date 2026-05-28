@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minha carteira</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; background: #020617; color: #e2e8f0; margin: 0; }
+    main { max-width: 1120px; margin: 32px auto; padding: 24px; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0 32px; }
+    th, td { border-bottom: 1px solid #334155; padding: 12px; text-align: left; }
+    form, .card { border: 1px solid #334155; border-radius: 16px; padding: 18px; background: #111827; margin-bottom: 24px; }
+    input, select, button { padding: 10px; border-radius: 8px; border: 1px solid #475569; margin: 6px; }
+    button { background: #38bdf8; color: #082f49; font-weight: 700; cursor: pointer; }
+    .logout { background: #f87171; color: #450a0a; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Olá, {{ user_name }}</h1>
+  <form method="post" action="/logout"><button class="logout" type="submit">Sair</button></form>
+
+  <section class="card">
+    <h2>Registrar nova compra</h2>
+    <form method="post" action="/purchases">
+      <select name="symbol">
+        {% for asset in assets %}<option value="{{ asset.symbol }}">{{ asset.symbol }} - {{ asset.name }}</option>{% endfor %}
+      </select>
+      <input name="quantity" type="number" step="0.0001" placeholder="Quantidade" required>
+      <input name="paid_price_cents" type="number" placeholder="Preço pago em centavos" required>
+      <button type="submit">Registrar compra</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Posições</h2>
+    <table>
+      <thead><tr><th>Ativo</th><th>Quantidade</th><th>Investido</th><th>Valor atual</th><th>Resultado</th></tr></thead>
+      <tbody>
+      {% for position in positions %}
+        <tr>
+          <td>{{ position.symbol }}</td>
+          <td>{{ position.quantity }}</td>
+          <td>{{ position.invested }}</td>
+          <td>{{ position.current_value }}</td>
+          <td>{{ position.profit }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Ativos disponíveis</h2>
+    <table>
+      <thead><tr><th>Símbolo</th><th>Nome</th><th>Preço atual</th></tr></thead>
+      <tbody>
+      {% for asset in assets %}<tr><td>{{ asset.symbol }}</td><td>{{ asset.name }}</td><td>{{ asset.current_price }}</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </section>
+</main>
+</body>
+</html>
