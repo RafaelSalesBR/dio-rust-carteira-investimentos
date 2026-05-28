@@ -34,10 +34,16 @@ Pré-requisito: Rust instalado via `rustup`.
 cargo run
 ```
 
+Por padrão o servidor usa a porta `8080`. Se quiser escolher outra porta:
+
+```bash
+PORT=3001 cargo run
+```
+
 Depois acesse:
 
 ```text
-http://127.0.0.1:3000
+http://127.0.0.1:8080
 ```
 
 Usuário de demonstração:
@@ -52,13 +58,13 @@ senha: 123456
 Listar ativos:
 
 ```bash
-curl http://127.0.0.1:3000/api/assets
+curl http://127.0.0.1:8080/api/assets
 ```
 
 Criar ou atualizar ativo:
 
 ```bash
-curl -X POST http://127.0.0.1:3000/api/assets \
+curl -X POST http://127.0.0.1:8080/api/assets \
   -H 'content-type: application/json' \
   -H 'x-admin-secret: admin' \
   -d '{"symbol":"ETH","name":"Ethereum","current_price_cents":1800000}'

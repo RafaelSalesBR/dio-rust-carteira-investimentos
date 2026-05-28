@@ -118,7 +118,11 @@ async fn main() {
 
     let state = seed_state();
     let app = router(state);
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let port = std::env::var("PORT")
+        .ok()
+        .and_then(|value| value.parse::<u16>().ok())
+        .unwrap_or(8080);
+    let addr = SocketAddr::from(([127, 0, 0, 1], port));
 
     println!("Servidor iniciado em http://{addr}");
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
