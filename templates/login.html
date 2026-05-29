@@ -343,36 +343,28 @@
     .submit:hover { background: rgba(255,255,255,0.90); }
     .submit:active { transform: scale(0.98); }
 
-    .register-panel {
-      margin-top: 20px;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: rgba(255,255,255,0.03);
-      padding: 18px;
-    }
-
-    .register-panel h3 {
-      margin: 0 0 6px;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-
-    .register-panel p {
-      margin: 0 0 16px;
-      color: var(--muted);
-      font-size: 0.84rem;
-      line-height: 1.55;
-    }
-
-    .register-panel .submit {
-      height: 50px;
-      margin-top: 14px;
+    .secondary-action {
+      width: 100%;
+      height: 52px;
+      margin-top: 12px;
       border: 1px solid var(--line);
       background: #000;
       color: white;
-      box-shadow: none;
+      border-radius: 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
     }
+
+    .secondary-action:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--line-strong);
+    }
+
+    .secondary-action:active { transform: scale(0.98); }
+
+    .is-hidden { display: none; }
 
     .footer-link {
       margin-top: 24px;
@@ -401,7 +393,7 @@
     @media (min-width: 1024px) {
       main { height: 100vh; overflow: hidden; padding: 16px; }
       .hero { display: flex; }
-      .auth { padding: 24px 64px; overflow: hidden; }
+      .auth { padding: 24px 64px; overflow-y: auto; }
       .mobile-brand { display: none; }
     }
 
@@ -413,7 +405,7 @@
       .form-grid { grid-template-columns: 1fr; }
       .social-grid { grid-template-columns: 1fr; }
       .auth { padding: 34px 8px; }
-      .register-panel { padding: 16px; }
+      .auth-header { margin-bottom: 22px; }
     }
   </style>
 </head>
@@ -441,13 +433,13 @@
       <div class="mobile-brand"><span class="brand-mark"></span><span>Invest Wallet</span></div>
 
       <header class="auth-header">
-        <h2>Criar novo perfil</h2>
-        <p>Use o acesso de demonstração ou cadastre um usuário para testar o fluxo completo.</p>
+        <h2 id="auth-title">Entrar na carteira</h2>
+        <p id="auth-description">Use o acesso de demonstração ou entre com seu usuário cadastrado.</p>
       </header>
 
       <p class="message">{{ message }}</p>
 
-      <div class="social-grid" aria-hidden="true">
+      <div id="social-auth" class="social-grid" aria-hidden="true">
         <a class="social-button" href="#" tabindex="-1">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.6 12.23c0-.74-.07-1.45-.19-2.13H12v4.03h5.38a4.6 4.6 0 0 1-1.99 3.02v2.51h3.23c1.89-1.74 2.98-4.3 2.98-7.43Z" fill="currentColor"/><path d="M12 22c2.7 0 4.97-.9 6.62-2.43l-3.23-2.51c-.9.6-2.04.95-3.39.95-2.6 0-4.81-1.76-5.6-4.12H3.07v2.59A10 10 0 0 0 12 22Z" fill="currentColor" opacity=".76"/><path d="M6.4 13.89A6.01 6.01 0 0 1 6.08 12c0-.65.11-1.29.32-1.89V7.52H3.07A10 10 0 0 0 2 12c0 1.61.39 3.14 1.07 4.48l3.33-2.59Z" fill="currentColor" opacity=".58"/><path d="M12 5.99c1.47 0 2.79.51 3.83 1.5l2.86-2.86A9.58 9.58 0 0 0 12 2a10 10 0 0 0-8.93 5.52l3.33 2.59C7.19 7.75 9.4 5.99 12 5.99Z" fill="currentColor" opacity=".9"/></svg>
           Google
@@ -458,9 +450,9 @@
         </a>
       </div>
 
-      <div class="divider">ou</div>
+      <div id="auth-divider" class="divider">ou</div>
 
-      <form method="post" action="/login" class="form-grid">
+      <form id="login-form" method="post" action="/login" class="form-grid">
         <div class="form-full">
           <label for="login-email">E-mail</label>
           <input id="login-email" name="email" type="email" value="rafael@example.com" autocomplete="email" required>
@@ -476,33 +468,80 @@
         <button class="submit form-full" type="submit">Entrar na carteira</button>
       </form>
 
-      <section class="register-panel">
-        <h3>Novo investidor?</h3>
-        <p>Cadastre um perfil para testar o fluxo de registro e autenticação.</p>
-        <form method="post" action="/register" class="form-grid">
-          <div>
-            <label for="register-name">Nome</label>
-            <input id="register-name" name="name" placeholder="Seu nome" autocomplete="name" required>
+      <form id="register-form" method="post" action="/register" class="form-grid is-hidden">
+        <div>
+          <label for="register-name">Nome</label>
+          <input id="register-name" name="name" placeholder="Seu nome" autocomplete="name" required disabled>
+        </div>
+        <div>
+          <label for="register-email">E-mail</label>
+          <input id="register-email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" required disabled>
+        </div>
+        <div class="form-full">
+          <label for="register-password">Senha</label>
+          <div class="password-wrap">
+            <input id="register-password" name="password" type="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required disabled>
+            <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
           </div>
-          <div>
-            <label for="register-email">E-mail</label>
-            <input id="register-email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" required>
-          </div>
-          <div class="form-full">
-            <label for="register-password">Senha</label>
-            <div class="password-wrap">
-              <input id="register-password" name="password" type="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required>
-              <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-            </div>
-            <p class="helper">Use uma senha simples para testar localmente.</p>
-          </div>
-          <button class="submit form-full" type="submit">Criar conta</button>
-        </form>
-      </section>
+          <p class="helper">Use uma senha simples para testar localmente.</p>
+        </div>
+        <button class="submit form-full" type="submit">Criar conta</button>
+      </form>
 
-      <p class="footer-link">Membro da equipe? <strong>Faça login acima</strong></p>
+      <button id="toggle-auth-mode" class="secondary-action" type="button">Criar nova conta</button>
     </div>
   </section>
 </main>
+<script>
+  const loginForm = document.querySelector('#login-form');
+  const registerForm = document.querySelector('#register-form');
+  const toggleButton = document.querySelector('#toggle-auth-mode');
+  const title = document.querySelector('#auth-title');
+  const description = document.querySelector('#auth-description');
+  const socialAuth = document.querySelector('#social-auth');
+  const authDivider = document.querySelector('#auth-divider');
+  const authSection = document.querySelector('.auth');
+
+  function setFormEnabled(form, enabled) {
+    form.querySelectorAll('input, button').forEach((field) => {
+      field.disabled = !enabled;
+    });
+  }
+
+  function showRegisterMode() {
+    loginForm.classList.add('is-hidden');
+    registerForm.classList.remove('is-hidden');
+    setFormEnabled(loginForm, false);
+    setFormEnabled(registerForm, true);
+    title.textContent = 'Criar nova conta';
+    description.textContent = 'Cadastre seu perfil para acessar a carteira.';
+    socialAuth.classList.add('is-hidden');
+    authDivider.classList.add('is-hidden');
+    toggleButton.textContent = 'Já tenho conta';
+    authSection.scrollTop = 0;
+  }
+
+  function showLoginMode() {
+    registerForm.classList.add('is-hidden');
+    loginForm.classList.remove('is-hidden');
+    setFormEnabled(registerForm, false);
+    setFormEnabled(loginForm, true);
+    title.textContent = 'Entrar na carteira';
+    description.textContent = 'Use o acesso de demonstração ou entre com seu usuário cadastrado.';
+    socialAuth.classList.remove('is-hidden');
+    authDivider.classList.remove('is-hidden');
+    toggleButton.textContent = 'Criar nova conta';
+    authSection.scrollTop = 0;
+  }
+
+  toggleButton.addEventListener('click', () => {
+    if (registerForm.classList.contains('is-hidden')) {
+      showRegisterMode();
+      return;
+    }
+
+    showLoginMode();
+  });
+</script>
 </body>
 </html>
