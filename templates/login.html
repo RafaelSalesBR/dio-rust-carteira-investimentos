@@ -3,25 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Carteira de Investimentos - Login</title>
+  <title>Carteira de Investimentos - Acesso</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
     :root {
-      color-scheme: light;
-      --bg: #f4f7fb;
-      --bg-strong: #e8eef8;
-      --card: #ffffff;
-      --card-soft: #f8fafc;
-      --ink: #0f172a;
-      --muted: #64748b;
-      --line: #dbe4f0;
-      --primary: #155eef;
-      --primary-dark: #0f43b8;
-      --primary-soft: #e8f0ff;
-      --success: #16a34a;
-      --shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
-      --radius-lg: 28px;
-      --radius-md: 16px;
-      --radius-sm: 12px;
+      color-scheme: dark;
+      --bg: #000;
+      --panel: #0b0b0d;
+      --panel-2: #111114;
+      --brand-gray: #1a1a1a;
+      --line: rgba(255, 255, 255, 0.10);
+      --line-strong: rgba(255, 255, 255, 0.18);
+      --text: #fff;
+      --muted: rgba(255, 255, 255, 0.48);
+      --soft: rgba(255, 255, 255, 0.70);
+      --green: #70f2a4;
+      --blue: #8ab4ff;
+      --radius: 28px;
     }
 
     * { box-sizing: border-box; }
@@ -30,314 +29,480 @@
       min-height: 100vh;
       margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at top left, rgba(21, 94, 239, 0.18), transparent 34rem),
-        radial-gradient(circle at bottom right, rgba(22, 163, 74, 0.12), transparent 30rem),
-        linear-gradient(135deg, #f8fbff 0%, var(--bg) 48%, var(--bg-strong) 100%);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
+
+    ::selection { background: rgba(255, 255, 255, 0.30); }
 
     main {
-      width: min(1120px, calc(100% - 32px));
+      display: flex;
       min-height: 100vh;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 28px;
-      align-items: center;
-      padding: 48px 0;
-    }
-
-    .hero,
-    .auth-card {
-      border: 1px solid rgba(219, 228, 240, 0.9);
-      border-radius: var(--radius-lg);
-      background: rgba(255, 255, 255, 0.82);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
+      width: 100%;
+      gap: 12px;
+      padding: 8px;
+      background:
+        radial-gradient(circle at 75% 20%, rgba(138, 180, 255, 0.16), transparent 28rem),
+        radial-gradient(circle at 65% 80%, rgba(112, 242, 164, 0.08), transparent 28rem),
+        #000;
+      transition: all 500ms ease;
     }
 
     .hero {
-      min-height: 620px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 42px;
-      overflow: hidden;
       position: relative;
+      display: none;
+      width: 52%;
+      height: calc(100vh - 32px);
+      min-height: 680px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      overflow: hidden;
+      border-radius: 32px;
+      padding: 0 48px 112px;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
+      isolation: isolate;
     }
 
-    .hero::after {
+    .hero video {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero::before {
       content: "";
       position: absolute;
-      width: 360px;
-      height: 360px;
-      right: -110px;
-      bottom: -120px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, rgba(21, 94, 239, 0.24), rgba(22, 163, 74, 0.18));
-      filter: blur(2px);
-      z-index: 0;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.18) 42%, rgba(0,0,0,0.72) 100%);
+      pointer-events: none;
     }
 
-    .hero > * { position: relative; z-index: 1; }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 360px;
+      border: 1px solid rgba(255,255,255,0.24);
+      border-radius: 28px;
+      background: #000;
+      padding: 26px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+      color: #fff;
+      animation: reveal 700ms ease-out both;
+    }
 
-    .eyebrow {
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 34px;
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      text-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: white;
+      box-shadow: inset 0 0 0 6px rgba(0,0,0,0.10), 0 12px 30px rgba(0,0,0,0.28);
+    }
+
+    .hero h1 {
+      margin: 0 0 14px;
+      font-size: 2.75rem;
+      font-weight: 600;
+      line-height: 0.95;
+      letter-spacing: -0.08em;
+      color: #fff;
+      text-shadow: 0 10px 28px rgba(0,0,0,0.35);
+    }
+
+    .hero p {
+      margin: 0 0 30px;
+      padding-right: 28px;
+      color: rgba(255,255,255,0.82);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      text-shadow: 0 8px 22px rgba(0,0,0,0.45);
+    }
+
+    .steps { display: grid; gap: 12px; }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 58px;
+      border-radius: 18px;
+      padding: 10px 14px;
+      color: white;
+      background: rgba(26, 26, 26, 0.88);
+      backdrop-filter: blur(16px);
+      animation: childReveal 500ms ease-out both;
+    }
+
+    .step:nth-child(1) { animation-delay: 160ms; }
+    .step:nth-child(2) { animation-delay: 300ms; }
+    .step:nth-child(3) { animation-delay: 440ms; }
+
+    .step.active {
+      border: 1px solid white;
+      background: white;
+      color: black;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      flex: 0 0 30px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.48);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .step.active .step-number { background: black; color: white; }
+    .step-text { font-size: 0.94rem; font-weight: 600; letter-spacing: -0.02em; }
+
+    .auth {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+      padding: 48px 16px;
+    }
+
+    .auth-inner {
+      width: 100%;
+      max-width: 560px;
+      animation: fadeIn 800ms ease-out both;
+    }
+
+    .mobile-brand {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      width: fit-content;
-      padding: 8px 12px;
-      border: 1px solid #cfe0ff;
-      border-radius: 999px;
-      background: var(--primary-soft);
-      color: var(--primary-dark);
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      gap: 10px;
+      margin-bottom: 34px;
+      color: white;
+      font-size: 1.12rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
     }
 
-    h1, h2, p { margin-top: 0; }
+    .auth-header { margin-bottom: 30px; }
 
-    h1 {
-      max-width: 640px;
-      margin: 26px 0 18px;
-      font-size: clamp(2.4rem, 6vw, 4.8rem);
-      line-height: 0.95;
+    .auth-header h2 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 8vw, 3.15rem);
+      font-weight: 600;
+      line-height: 0.98;
       letter-spacing: -0.07em;
     }
 
-    .lead {
-      max-width: 560px;
+    .auth-header p {
+      margin: 0;
       color: var(--muted);
-      font-size: 1.08rem;
-      line-height: 1.7;
+      font-size: 0.95rem;
     }
 
-    .feature-grid {
+    .message {
+      min-height: 22px;
+      margin: 0 0 18px;
+      color: rgba(255,255,255,0.68);
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    .social-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px;
-      margin-top: 38px;
+      margin-bottom: 26px;
     }
 
-    .feature {
+    .social-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
       border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      background: rgba(248, 250, 252, 0.86);
-      padding: 16px;
+      border-radius: 16px;
+      background: #000;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 180ms ease, transform 180ms ease, border-color 180ms ease;
     }
 
-    .feature strong {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 0.92rem;
-    }
+    .social-button:hover { background: rgba(255,255,255,0.05); border-color: var(--line-strong); transform: translateY(-1px); }
+    .social-button svg { width: 18px; height: 18px; }
 
-    .feature span {
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.45;
-    }
-
-    .portfolio-preview {
-      margin-top: 34px;
-      border: 1px solid rgba(219, 228, 240, 0.9);
-      border-radius: 24px;
-      background: #0f172a;
-      color: #e2e8f0;
-      padding: 18px;
-      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.24);
-    }
-
-    .preview-top {
+    .divider {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      color: #94a3b8;
-      font-size: 0.86rem;
-    }
-
-    .preview-total {
-      font-size: 2rem;
-      font-weight: 850;
-      letter-spacing: -0.05em;
-      color: #f8fafc;
-    }
-
-    .preview-pill {
-      display: inline-flex;
-      margin-top: 8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(34, 197, 94, 0.12);
-      color: #86efac;
+      gap: 16px;
+      margin: 0 0 26px;
+      color: rgba(255,255,255,0.40);
+      font-size: 0.75rem;
       font-weight: 700;
-      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
     }
 
-    .bar-chart {
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: var(--line);
+    }
+
+    .form-grid {
       display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 7px;
-      align-items: end;
-      min-height: 120px;
-      margin-top: 22px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
     }
 
-    .bar {
-      border-radius: 999px 999px 4px 4px;
-      background: linear-gradient(180deg, #60a5fa, #155eef);
-      min-height: 28px;
-    }
-
-    .bar:nth-child(2n) { background: linear-gradient(180deg, #86efac, #16a34a); }
-
-    .auth-card {
-      padding: 18px;
-    }
-
-    .panel {
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: var(--card);
-      padding: 26px;
-    }
-
-    .panel + .panel { margin-top: 16px; }
-
-    .panel h2 {
-      margin-bottom: 8px;
-      font-size: 1.35rem;
-      letter-spacing: -0.03em;
-    }
-
-    .panel p {
-      margin-bottom: 22px;
-      color: var(--muted);
-      line-height: 1.55;
-    }
+    .form-full { grid-column: 1 / -1; }
 
     label {
       display: block;
-      margin: 14px 0 7px;
-      color: #334155;
+      margin-bottom: 8px;
+      color: white;
       font-size: 0.88rem;
-      font-weight: 750;
+      font-weight: 600;
     }
 
     input {
       width: 100%;
-      min-height: 48px;
-      padding: 12px 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
-      background: var(--card-soft);
-      color: var(--ink);
+      height: 48px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--brand-gray);
+      color: white;
+      padding: 0 15px;
       font: inherit;
       outline: none;
-      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      transition: box-shadow 180ms ease, background 180ms ease;
     }
 
-    input:focus {
-      border-color: var(--primary);
-      background: #fff;
-      box-shadow: 0 0 0 4px rgba(21, 94, 239, 0.12);
+    input::placeholder { color: rgba(255,255,255,0.22); }
+    input:focus { box-shadow: 0 0 0 3px rgba(255,255,255,0.16); background: #202024; }
+
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 48px; }
+    .eye {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: rgba(255,255,255,0.42);
+      pointer-events: none;
     }
 
-    button {
+    .helper {
+      margin: 8px 0 0;
+      color: rgba(255,255,255,0.36);
+      font-size: 0.78rem;
+    }
+
+    .submit {
       width: 100%;
-      min-height: 50px;
-      margin-top: 18px;
+      height: 56px;
+      margin-top: 20px;
       border: 0;
-      border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, var(--primary), #3478ff);
-      color: white;
+      border-radius: 16px;
+      background: white;
+      color: black;
       font: inherit;
-      font-weight: 850;
+      font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 14px 28px rgba(21, 94, 239, 0.24);
-      transition: transform 160ms ease, box-shadow 160ms ease;
+      transition: transform 160ms ease, background 160ms ease;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 34px rgba(21, 94, 239, 0.3);
+    .submit:hover { background: rgba(255,255,255,0.90); }
+    .submit:active { transform: scale(0.98); }
+
+    .register-panel {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.03);
+      padding: 18px;
     }
 
-    .message {
-      min-height: 24px;
-      margin: 0 0 14px;
-      color: var(--primary-dark);
+    .register-panel h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
       font-weight: 700;
+      letter-spacing: -0.03em;
     }
 
-    .secondary button {
-      background: #0f172a;
-      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+    .register-panel p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.55;
     }
 
-    @media (max-width: 880px) {
-      main { grid-template-columns: 1fr; padding: 24px 0; }
-      .hero { min-height: auto; padding: 28px; }
-      .feature-grid { grid-template-columns: 1fr; }
+    .register-panel .submit {
+      height: 50px;
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      background: #000;
+      color: white;
+      box-shadow: none;
+    }
+
+    .footer-link {
+      margin-top: 24px;
+      text-align: center;
+      color: rgba(255,255,255,0.44);
+      font-size: 0.9rem;
+    }
+
+    .footer-link strong { color: white; font-weight: 700; }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes childReveal {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (min-width: 1024px) {
+      main { height: 100vh; overflow: hidden; padding: 16px; }
+      .hero { display: flex; }
+      .auth { padding: 24px 64px; overflow: hidden; }
+      .mobile-brand { display: none; }
+    }
+
+    @media (min-width: 1280px) {
+      .auth { padding-inline: 96px; }
+    }
+
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .social-grid { grid-template-columns: 1fr; }
+      .auth { padding: 34px 8px; }
+      .register-panel { padding: 16px; }
     }
   </style>
 </head>
 <body>
 <main>
-  <section class="hero" aria-labelledby="page-title">
-    <div>
-      <span class="eyebrow">Projeto DIO em Rust</span>
-      <h1 id="page-title">Carteira digital para acompanhar seus ativos.</h1>
-      <p class="lead">Aplicação web com Axum, Askama, JWT em cookies e uma área autenticada para registrar compras, consultar posições e visualizar ativos disponíveis.</p>
-      <div class="feature-grid" aria-label="Recursos do projeto">
-        <div class="feature"><strong>Login seguro</strong><span>Fluxo de autenticação com sessão via cookie.</span></div>
-        <div class="feature"><strong>Compras</strong><span>Registro de quantidade e preço pago por ativo.</span></div>
-        <div class="feature"><strong>Dashboard</strong><span>Resumo visual das posições da carteira.</span></div>
-      </div>
-    </div>
+  <section class="hero" aria-labelledby="hero-title">
+    <video autoplay muted loop playsinline aria-hidden="true">
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260506_081238_406ed0e3-5d83-436e-a512-0bbff7ec5b95.mp4" type="video/mp4">
+    </video>
 
-    <div class="portfolio-preview" aria-hidden="true">
-      <div class="preview-top"><span>Prévia da carteira</span><span>Atualizado agora</span></div>
-      <div class="preview-total">R$ 24.860,00</div>
-      <span class="preview-pill">+8,4% no mês</span>
-      <div class="bar-chart">
-        <span class="bar" style="height: 44px"></span><span class="bar" style="height: 68px"></span><span class="bar" style="height: 52px"></span><span class="bar" style="height: 86px"></span><span class="bar" style="height: 64px"></span><span class="bar" style="height: 98px"></span><span class="bar" style="height: 72px"></span><span class="bar" style="height: 112px"></span><span class="bar" style="height: 82px"></span><span class="bar" style="height: 104px"></span><span class="bar" style="height: 92px"></span><span class="bar" style="height: 118px"></span>
+    <div class="hero-content">
+      <div class="brand"><span class="brand-mark"></span><span>Invest Wallet</span></div>
+      <h1 id="hero-title">Ative sua carteira</h1>
+      <p>Três passos rápidos para acessar o painel, registrar compras e acompanhar a evolução dos seus ativos.</p>
+      <div class="steps" aria-label="Etapas de uso">
+        <div class="step active"><span class="step-number">1</span><span class="step-text">Entrar ou criar sua conta</span></div>
+        <div class="step"><span class="step-number">2</span><span class="step-text">Registrar compras de ativos</span></div>
+        <div class="step"><span class="step-number">3</span><span class="step-text">Analisar posições da carteira</span></div>
       </div>
     </div>
   </section>
 
-  <aside class="auth-card" aria-label="Acesso à carteira">
-    <section class="panel">
-      <h2>Entrar</h2>
-      <p>Acesse a carteira com o usuário de demonstração ou com uma conta cadastrada.</p>
-      <p class="message">{{ message }}</p>
-      <form method="post" action="/login">
-        <label for="login-email">E-mail</label>
-        <input id="login-email" name="email" type="email" value="rafael@example.com" autocomplete="email" required>
-        <label for="login-password">Senha</label>
-        <input id="login-password" name="password" type="password" value="123456" autocomplete="current-password" required>
-        <button type="submit">Entrar na carteira</button>
-      </form>
-    </section>
+  <section class="auth" aria-label="Acesso à carteira">
+    <div class="auth-inner">
+      <div class="mobile-brand"><span class="brand-mark"></span><span>Invest Wallet</span></div>
 
-    <section class="panel secondary">
-      <h2>Cadastrar usuário</h2>
-      <p>Crie uma nova conta para testar o fluxo completo de autenticação.</p>
-      <form method="post" action="/register">
-        <label for="register-name">Nome</label>
-        <input id="register-name" name="name" autocomplete="name" required>
-        <label for="register-email">E-mail</label>
-        <input id="register-email" name="email" type="email" autocomplete="email" required>
-        <label for="register-password">Senha</label>
-        <input id="register-password" name="password" type="password" autocomplete="new-password" required>
-        <button type="submit">Criar conta</button>
+      <header class="auth-header">
+        <h2>Criar novo perfil</h2>
+        <p>Use o acesso de demonstração ou cadastre um usuário para testar o fluxo completo.</p>
+      </header>
+
+      <p class="message">{{ message }}</p>
+
+      <div class="social-grid" aria-hidden="true">
+        <a class="social-button" href="#" tabindex="-1">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.6 12.23c0-.74-.07-1.45-.19-2.13H12v4.03h5.38a4.6 4.6 0 0 1-1.99 3.02v2.51h3.23c1.89-1.74 2.98-4.3 2.98-7.43Z" fill="currentColor"/><path d="M12 22c2.7 0 4.97-.9 6.62-2.43l-3.23-2.51c-.9.6-2.04.95-3.39.95-2.6 0-4.81-1.76-5.6-4.12H3.07v2.59A10 10 0 0 0 12 22Z" fill="currentColor" opacity=".76"/><path d="M6.4 13.89A6.01 6.01 0 0 1 6.08 12c0-.65.11-1.29.32-1.89V7.52H3.07A10 10 0 0 0 2 12c0 1.61.39 3.14 1.07 4.48l3.33-2.59Z" fill="currentColor" opacity=".58"/><path d="M12 5.99c1.47 0 2.79.51 3.83 1.5l2.86-2.86A9.58 9.58 0 0 0 12 2a10 10 0 0 0-8.93 5.52l3.33 2.59C7.19 7.75 9.4 5.99 12 5.99Z" fill="currentColor" opacity=".9"/></svg>
+          Google
+        </a>
+        <a class="social-button" href="#" tabindex="-1">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.59 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.19-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.86.09-.67.35-1.12.64-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.71 0 0 .84-.28 2.75 1.05A9.27 9.27 0 0 1 12 6.99c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.4.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.95.68 1.92 0 1.38-.01 2.5-.01 2.84 0 .27.18.59.69.49A10.1 10.1 0 0 0 22 12.26C22 6.59 17.52 2 12 2Z"/></svg>
+          GitHub
+        </a>
+      </div>
+
+      <div class="divider">ou</div>
+
+      <form method="post" action="/login" class="form-grid">
+        <div class="form-full">
+          <label for="login-email">E-mail</label>
+          <input id="login-email" name="email" type="email" value="rafael@example.com" autocomplete="email" required>
+        </div>
+        <div class="form-full">
+          <label for="login-password">Senha</label>
+          <div class="password-wrap">
+            <input id="login-password" name="password" type="password" value="123456" autocomplete="current-password" required>
+            <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <p class="helper">Usuário de demonstração: rafael@example.com / 123456.</p>
+        </div>
+        <button class="submit form-full" type="submit">Entrar na carteira</button>
       </form>
-    </section>
-  </aside>
+
+      <section class="register-panel">
+        <h3>Novo investidor?</h3>
+        <p>Cadastre um perfil para testar o fluxo de registro e autenticação.</p>
+        <form method="post" action="/register" class="form-grid">
+          <div>
+            <label for="register-name">Nome</label>
+            <input id="register-name" name="name" placeholder="Seu nome" autocomplete="name" required>
+          </div>
+          <div>
+            <label for="register-email">E-mail</label>
+            <input id="register-email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" required>
+          </div>
+          <div class="form-full">
+            <label for="register-password">Senha</label>
+            <div class="password-wrap">
+              <input id="register-password" name="password" type="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required>
+              <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <p class="helper">Use uma senha simples para testar localmente.</p>
+          </div>
+          <button class="submit form-full" type="submit">Criar conta</button>
+        </form>
+      </section>
+
+      <p class="footer-link">Membro da equipe? <strong>Faça login acima</strong></p>
+    </div>
+  </section>
 </main>
 </body>
 </html>
